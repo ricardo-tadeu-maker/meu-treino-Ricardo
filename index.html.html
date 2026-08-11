@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#1687ff">
+<title>Meu Treino V2</title>
+<style>
+:root{--blue:#1687ff;--bg:#f3f5f8;--card:#fff;--text:#18202a;--muted:#707b88;--line:#e2e7ed;--green:#12a86b}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
+button,input{font:inherit}button{cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.app{max-width:560px;margin:auto;min-height:100vh;padding-bottom:100px}
+header{background:linear-gradient(150deg,#0e78ea,#4aa8ff);color:#fff;padding:28px 20px 24px;border-radius:0 0 28px 28px}
+header h1{margin:0;font-size:29px}header p{margin:5px 0 0;opacity:.9}
+nav{display:flex;gap:8px;padding:14px 14px 8px;overflow-x:auto;position:sticky;top:0;background:var(--bg);z-index:5}
+nav button{border:0;background:#fff;color:#66717d;padding:11px 15px;border-radius:22px;font-weight:800;white-space:nowrap}
+nav button.active{background:var(--blue);color:#fff}
+main{padding:8px 15px}.screen{display:none}.screen.active{display:block}
+.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px;margin:10px 0;box-shadow:0 2px 9px rgba(20,30,40,.04)}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px}.title{font-weight:850;font-size:17px}.muted{color:var(--muted);font-size:13px}
+.pill{background:#eaf4ff;color:#1475d9;padding:7px 10px;border-radius:12px;font-weight:800;font-size:12px}
+.primary,.green,.gray{border:0;border-radius:13px;padding:13px 16px;font-weight:850}
+.primary{background:var(--blue);color:#fff}.green{background:#e8f8f1;color:#087b4d}.gray{background:#edf1f5;color:#26323d}
+.exercise{padding:15px}.last{margin:10px 0;color:#44515e}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}input{width:100%;border:1px solid #d7dee6;border-radius:12px;padding:12px;background:#fff;color:#111}
+.series{display:flex;gap:8px;align-items:center;margin-top:9px}.series b{width:25px}.series input{padding:9px}
+.actions{display:flex;gap:8px;margin-top:10px}.actions button{flex:1}
+.bottom{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(560px,100%);background:#fff;border-top:1px solid var(--line);padding:12px 15px calc(12px + env(safe-area-inset-bottom));display:flex;gap:9px;z-index:20}.bottom button{flex:1}
+.notice{background:#fff7dc;border:1px solid #eedc9b;border-radius:14px;padding:12px;color:#725800;font-size:13px}
+.statgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.stat{background:#fff;border:1px solid var(--line);border-radius:17px;padding:15px}.stat b{display:block;font-size:25px;margin-top:3px}
+.timer{font-size:48px;text-align:center;font-weight:900}.hidden{display:none!important}
+</style>
+</head>
+<body>
+<div class="app">
+<header><h1>🏋️ Meu Treino</h1><p>V2 • registre, compare e evolua</p></header>
+<nav>
+<button id="tab-home" class="active" data-screen="home">Início</button>
+<button id="tab-workouts" data-screen="treinos">Treinos</button>
+<button id="tab-history" data-screen="historico">Histórico</button>
+<button id="tab-progress" data-screen="evolucao">Evolução</button>
+<button id="tab-ai" data-screen="ia">🤖 IA</button>
+</nav>
+<main>
+<section id="home" class="screen active">
+<div class="card"><div class="row"><div><div class="muted">Próximo treino</div><div class="title" style="font-size:25px">Treino 1</div></div><span class="pill">7 exercícios</span></div><p class="muted">Toque em iniciar para começar a registrar.</p><button class="primary" id="home-start">▶ Iniciar treino</button></div>
+<div class="statgrid"><div class="stat"><span class="muted">Exercícios</span><b>34</b></div><div class="stat"><span class="muted">Registros</span><b id="count">0</b></div></div>
+<div class="card"><div class="title">🎯 Importante</div><p class="muted">Na tela Treinos você poderá editar carga e repetições antes de salvar cada série.</p></div>
+</section>
+<section id="treinos" class="screen"><div id="workoutList"></div></section>
+<section id="historico" class="screen"><div id="history"></div></section>
+<section id="evolucao" class="screen"><div id="progress"></div></section>
+<section id="ia" class="screen"><div class="card"><div class="title">🤖 IA</div><p class="muted">Depois que você registrar alguns treinos, vamos usar seu histórico para analisar evolução, melhores marcas e possíveis aumentos de carga.</p></div></section>
+</main>
+<div class="bottom"><button class="gray" id="rest">⏱️ Descanso</button><button class="primary" id="bottom-start">▶ Iniciar treino</button></div>
+</div>
+
+<script>
+(function(){
+"use strict";
+var workouts=[
+{name:"Treino 1",focus:"Costas + bíceps + deltoide",ex:[
+["Puxador frente pegada aberta","Dorsal",10,65],["Remada máquina","Dorsal",10,50],["Crucifixo inverso na máquina","Deltoide",10,40],["Pulldown na polia","Dorsal",10,39],["Rosca simultânea Banco 45°","Bíceps",10,12],["Elevação lateral sentado com halter","Deltoide",8,8],["Rosca Scott com barra","Bíceps",10,26]]},
+{name:"Treino 2",focus:"Peito + deltoide + tríceps",ex:[
+["Supino reto com barra","Peitoral",10,30],["Desenvolvimento máquina","Deltoide",10,30],["Crossover","Peitoral",12,55],["Supino inclinado com halteres","Peitoral",10,14],["Tríceps testa pegada pronada","Tríceps",10,22],["Elevação lateral na polia","Deltoide",10,10],["Tríceps corda","Tríceps",10,44]]},
+{name:"Treino 3",focus:"Misto",ex:[
+["Abdominal supra na polia","Abdome",15,30],["Supino máquina","Peitoral",8,50],["Remada curvada","Dorsal",10,40],["Desenvolvimento com halteres","Deltoide",10,28],["Exercício a confirmar","A confirmar",10,100],["Cadeira flexora","Isquiotibiais",10,55],["Cadeira extensora","Quadríceps",10,50],["Abdominal infra no banco declinado","Abdome",15,20]]},
+{name:"Treino 4",focus:"Pernas",ex:[
+["Mesa flexora","Isquiotibiais",10,40],["Agachamento Hack","MMII",10,100],["Levantamento terra","MMII",10,40],["Leg press 45°","MMII",10,100]]},
+{name:"Treino 5",focus:"Costas + peito + braços",ex:[
+["Puxador pela frente com triângulo","Dorsal",10,50],["Crossover baixo","Peitoral",30,12],["Super-série: Rosca Direta Barra W + Tríceps francês","Bíceps/Tríceps",12,26]]}
+];
+var data=[];
+try{var saved=window.localStorage.getItem("meuTreinoV2");if(saved)data=JSON.parse(saved)||[]}catch(e){data=[]}
+
+function saveData(){try{window.localStorage.setItem("meuTreinoV2",JSON.stringify(data))}catch(e){}document.getElementById("count").textContent=data.length}
+function navigate(id){
+ document.querySelectorAll(".screen").forEach(function(s){s.classList.remove("active")});
+ document.getElementById(id).classList.add("active");
+ document.querySelectorAll("nav button").forEach(function(b){b.classList.toggle("active",b.getAttribute("data-screen")===id)});
+ if(id==="treinos")renderWorkouts();
+ if(id==="historico")renderHistory();
+ if(id==="evolucao")renderProgress();
+ window.scrollTo(0,0);
+}
+document.querySelectorAll("nav button").forEach(function(b){b.addEventListener("click",function(){navigate(b.getAttribute("data-screen"))})});
+document.getElementById("home-start").addEventListener("click",function(){navigate("treinos")});
+document.getElementById("bottom-start").addEventListener("click",function(){navigate("treinos")});
+
+function lastFor(w,e){for(var i=data.length-1;i>=0;i--)if(data[i].w===w&&data[i].e===e)return data[i];return null}
+
+function renderWorkouts(){
+ var root=document.getElementById("workoutList");root.innerHTML="";
+ workouts.forEach(function(w,wi){
+  var wrap=document.createElement("div");wrap.className="card";
+  wrap.innerHTML="<div class='row'><div><div class='title'>"+w.name+"</div><div class='muted'>"+w.focus+"</div></div><span class='pill'>"+w.ex.length+" exercícios</span></div>";
+  w.ex.forEach(function(e,ei){
+   var last=lastFor(wi,ei),kg=last?last.kg:e[3],reps=last?last.reps:e[2];
+   var d=document.createElement("div");d.className="card exercise";
+   d.innerHTML="<div class='row'><div><div class='title'>"+e[0]+"</div><div class='muted'>"+e[1]+"</div></div><span class='pill'>meta "+e[2]+" reps</span></div>"+
+   "<div class='last'>🔙 Último: <b>"+reps+" × "+kg+" kg</b></div>"+
+   "<div class='grid'><input class='kg' type='number' step='0.5' value='"+kg+"'><input class='reps' type='number' value='"+reps+"'></div>"+
+   "<div class='actions'><button class='green save'>✅ Salvar série</button><button class='gray details'>Histórico</button></div>";
+   d.querySelector(".save").addEventListener("click",function(){
+    var k=Number(d.querySelector(".kg").value),r=Number(d.querySelector(".reps").value);
+    if(!k||!r){alert("Digite a carga e as repetições.");return}
+    data.push({date:new Date().toLocaleString("pt-BR"),w:wi,e:ei,kg:k,reps:r});saveData();
+    d.querySelector(".last").innerHTML="🔙 Último: <b>"+r+" × "+k+" kg</b> <span style='color:#087b4d'>• salvo ✓</span>";
+   });
+   d.querySelector(".details").addEventListener("click",function(){
+    var arr=data.filter(function(x){return x.w===wi&&x.e===ei});
+    alert(e[0]+"\\n\\n"+(arr.length?arr.slice(-8).map(function(x){return x.date+" — "+x.kg+" kg × "+x.reps}).join("\\n"):"Ainda não há registros novos."));
+   });
+   wrap.appendChild(d);
+  });
+  root.appendChild(wrap);
+ });
+}
+function renderHistory(){
+ var root=document.getElementById("history");root.innerHTML="";
+ if(!data.length){root.innerHTML="<div class='notice'>Ainda não há registros. Vá em Treinos e salve sua primeira série.</div>";return}
+ data.slice().reverse().forEach(function(x){var e=workouts[x.w].ex[x.e],d=document.createElement("div");d.className="card";d.innerHTML="<div class='title'>"+e[0]+"</div><div class='muted'>"+x.date+" • "+x.kg+" kg × "+x.reps+" reps</div>";root.appendChild(d)})
+}
+function renderProgress(){
+ var root=document.getElementById("progress");root.innerHTML="";
+ workouts.forEach(function(w,wi){w.ex.forEach(function(e,ei){
+  var last=lastFor(wi,ei),current=last?last.kg:e[3],pct=e[3]?Math.round((current/e[3]-1)*100):0;
+  var d=document.createElement("div");d.className="card";d.innerHTML="<div class='row'><div><div class='title'>"+e[0]+"</div><div class='muted'>"+w.name+"</div></div><b>"+current+" kg</b></div><p class='muted'>"+(last?(pct>=0?"+":"")+pct+"% vs. carga-base":"Sem registro novo ainda")+"</p>";root.appendChild(d);
+ })});
+}
+var timer=null,seconds=0;
+document.getElementById("rest").addEventListener("click",function(){
+ clearInterval(timer);seconds=90;alert("⏱️ Descanso iniciado: 1:30");
+ timer=setInterval(function(){seconds--;if(seconds<=0){clearInterval(timer);alert("⏰ Descanso encerrado!");}},1000);
+});
+saveData();
+renderWorkouts();
+})();
+</script>
+</body>
+</html>
