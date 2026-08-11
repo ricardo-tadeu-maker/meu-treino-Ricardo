@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#1687ff">
+<title>Meu Treino — Ricardo</title>
+<style>
+:root{--blue:#1687ff;--blue2:#0d6ed5;--bg:#f4f7fb;--card:#fff;--text:#132238;--muted:#718096;--line:#e4eaf2;--green:#18a66b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;padding-bottom:92px}.app{max-width:620px;margin:auto;min-height:100vh}
+header{background:linear-gradient(145deg,#1687ff,#0d6ed5);color:#fff;padding:28px 18px 22px;border-radius:0 0 28px 28px}.brand{font-size:29px;font-weight:850}.sub{opacity:.9;margin-top:4px}
+.tabs{display:flex;gap:8px;overflow:auto;padding:14px 12px 4px}.tabs button{border:0;background:#fff;color:#6b7788;border-radius:18px;padding:11px 15px;font-size:15px;font-weight:750;white-space:nowrap}.tabs button.active{background:var(--blue);color:#fff}
+main{padding:8px 14px}.screen{display:none}.screen.active{display:block}.card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:16px;margin:12px 0;box-shadow:0 8px 25px rgba(26,54,93,.07)}
+h2{margin:3px 0 8px;font-size:23px}.muted{color:var(--muted)}.next{display:flex;justify-content:space-between;align-items:center;gap:10px}.badge{background:#eaf4ff;color:#1475d9;padding:8px 11px;border-radius:12px;font-weight:800}
+.btn{border:0;border-radius:14px;padding:12px 15px;font-size:15px;font-weight:800}.primary{background:var(--blue);color:#fff}.secondary{background:#edf3f9;color:#2c3d53}.danger{background:#ffecec;color:#c33}.row{display:flex;gap:9px;align-items:center;justify-content:space-between}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.exercise{border:1px solid var(--line);border-radius:17px;padding:13px;margin:10px 0}.exercise h3{margin:0 0 4px;font-size:17px}.series{display:grid;grid-template-columns:38px 1fr 1fr 72px;gap:7px;align-items:center;margin-top:8px}.series input{width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;font-size:15px}.series b{font-size:13px;color:var(--muted);text-align:center}
+.bottom{position:fixed;left:50%;bottom:12px;transform:translateX(-50%);width:min(590px,calc(100% - 24px));background:#fff;border:1px solid var(--line);border-radius:22px;padding:9px;display:flex;gap:8px;box-shadow:0 12px 30px rgba(20,40,70,.16)}.bottom button{flex:1}.timer{font-size:34px;font-weight:850;text-align:center;margin:8px}
+.stat{font-size:25px;font-weight:850}.list button{width:100%;text-align:left;background:#fff;border:1px solid var(--line);border-radius:15px;padding:14px;margin:6px 0;font-weight:750;color:var(--text)}
+.small{font-size:13px}.modal{display:none;position:fixed;inset:0;background:rgba(10,20,35,.45);z-index:5;align-items:flex-end}.modal.show{display:flex}.sheet{background:#fff;width:100%;max-width:620px;margin:auto;border-radius:24px 24px 0 0;padding:20px}.sheet input{width:100%;padding:13px;border:1px solid var(--line);border-radius:12px;margin:6px 0 12px;font-size:16px}
+</style>
+</head>
+<body>
+<div class="app">
+<header><div class="brand">🏋️ Meu Treino</div><div class="sub">Versão 2 • registre, compare e evolua</div></header>
+
+<nav class="tabs">
+<button class="active" data-tab="home">Início</button><button data-tab="treinos">Treinos</button><button data-tab="historico">Histórico</button><button data-tab="evolucao">Evolução</button><button data-tab="ia">🤖 IA</button>
+</nav>
+
+<main>
+<section id="home" class="screen active">
+<div class="card">
+<div class="muted">Próximo treino</div><div class="next"><h2 id="nextName">Treino 1</h2><span class="badge" id="nextCount">7 exercícios</span></div>
+<p class="muted">Escolha um treino para começar. Sua última carga fica salva neste aparelho.</p>
+<button class="btn primary" onclick="tab('treinos')">Ver treinos</button>
+</div>
+<div class="grid"><div class="card"><div class="muted">Exercícios</div><div class="stat" id="exerciseCount">34</div></div><div class="card"><div class="muted">Registros</div><div class="stat" id="recordCount">0</div></div></div>
+<div class="card"><h2>🎯 Como usar</h2><p class="muted">Abra um treino, registre cada série e toque em salvar. Na próxima vez, sua última carga aparece automaticamente.</p></div>
+</section>
+
+<section id="treinos" class="screen">
+<div class="card"><h2>Seus treinos</h2><p class="muted">Toque em um treino para iniciar.</p><div id="workoutList" class="list"></div></div>
+</section>
+
+<section id="historico" class="screen">
+<div class="card"><h2>Histórico</h2><div id="history"></div></div>
+</section>
+
+<section id="evolucao" class="screen">
+<div class="card"><h2>📈 Evolução</h2><p class="muted">Acompanhe sua progressão de carga.</p><div id="progress"></div></div>
+</section>
+
+<section id="ia" class="screen">
+<div class="card"><h2>🤖 IA do treino</h2><p class="muted">Dica baseada nos seus registros.</p><p id="aiText">Registre alguns treinos para eu analisar sua evolução.</p></div>
+</section>
+
+<section id="workout" class="screen">
+<div class="card"><div class="row"><div><div class="muted">Treino</div><h2 id="workoutTitle">Treino 1</h2></div><button class="btn secondary" onclick="tab('treinos')">Voltar</button></div></div>
+<div id="exerciseList"></div>
+<div class="card"><button class="btn primary" style="width:100%" onclick="finishWorkout()">✅ Finalizar treino</button></div>
+</section>
+</main>
+</div>
+
+<div class="bottom"><button class="btn secondary" onclick="startRest()">⏱️ Descanso</button><button class="btn primary" onclick="startCurrent()">▶️ Iniciar treino</button></div>
+
+<div id="modal" class="modal"><div class="sheet">
+<div class="row"><h2 id="modalTitle">Descanso</h2><button class="btn secondary" onclick="closeModal()">Fechar</button></div>
+<div id="timer" class="timer">01:30</div><div class="row"><button class="btn secondary" onclick="setTimer(60)">1 min</button><button class="btn secondary" onclick="setTimer(90)">1:30</button><button class="btn secondary" onclick="setTimer(120)">2 min</button></div>
+</div></div>
+
+<script>
+const defaults=[
+{name:"Treino 1",items:["Costas + bíceps","Puxada frontal","Remada baixa","Remada unilateral","Rosca direta","Rosca martelo","Face pull"]},
+{name:"Treino 2",items:["Peito + tríceps","Supino reto","Supino inclinado","Crucifixo","Tríceps pulley","Tríceps francês","Elevação lateral"]},
+{name:"Treino 3",items:["Pernas","Leg press 45","Agachamento","Cadeira extensora","Mesa flexora","Stiff","Panturrilha"]},
+{name:"Treino 4",items:["Ombros + braços","Desenvolvimento","Elevação lateral","Elevação posterior","Rosca direta","Tríceps corda","Abdominal"]},
+{name:"Treino 5",items:["Full body","Leg press 45","Supino","Puxada","Remada","Desenvolvimento","Abdominal"]}
+];
+let workouts=JSON.parse(localStorage.getItem("ricardo_workouts")||"null")||defaults;
+let history=JSON.parse(localStorage.getItem("ricardo_history")||"[]"), current=0, timerSec=90, timerInt=null;
+
+function save(){localStorage.setItem("ricardo_workouts",JSON.stringify(workouts));localStorage.setItem("ricardo_history",JSON.stringify(history));renderAll()}
+function tab(id){document.querySelectorAll(".screen").forEach(x=>x.classList.remove("active"));document.getElementById(id).classList.add("active");document.querySelectorAll(".tabs button").forEach(x=>x.classList.toggle("active",x.dataset.tab===id));if(id==="treinos")renderList()}
+document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>tab(b.dataset.tab));
+
+function renderList(){const el=document.getElementById("workoutList");el.innerHTML="";workouts.forEach((w,i)=>{const b=document.createElement("button");b.innerHTML=`<div>${w.name}</div><span class="muted small">${w.items.length} exercícios</span>`;b.onclick=()=>openWorkout(i);el.appendChild(b)})}
+function openWorkout(i){current=i;document.getElementById("workoutTitle").textContent=workouts[i].name;const el=document.getElementById("exerciseList");el.innerHTML="";workouts[i].items.forEach((name,j)=>{const key=`w${i}e${j}`;let last=localStorage.getItem(key)||"";let html=`<div class="exercise"><h3>${j+1}. ${name}</h3><div class="muted small">Última carga: ${last?last+" kg":"—"}</div>`;for(let s=1;s<=4;s++)html+=`<div class="series"><b>S${s}</b><input inputmode="decimal" placeholder="kg" data-key="${key}" value="${s===1?last:""}"><input inputmode="numeric" placeholder="reps" data-rep="${key}-${s}"><button class="btn secondary" onclick="saveSet('${key}',this)">Salvar</button></div>`;html+=`</div>`;el.insertAdjacentHTML("beforeend",html)});tab("workout")}
+function saveSet(key,btn){const inp=btn.parentElement.querySelector("input[data-key]");if(!inp.value)return;localStorage.setItem(key,inp.value);history.unshift({date:new Date().toLocaleString("pt-BR"),workout:workouts[current].name,key,kg:inp.value});history=history.slice(0,100);save();btn.textContent="✓";setTimeout(()=>btn.textContent="Salvar",800)}
+function finishWorkout(){history.unshift({date:new Date().toLocaleString("pt-BR"),workout:workouts[current].name,key:"treino",kg:""});history=history.slice(0,100);save();alert("Treino salvo! 💪");tab("home")}
+function startCurrent(){openWorkout(current)}
+function startRest(){setTimer(90);document.getElementById("modal").classList.add("show")}
+function closeModal(){document.getElementById("modal").classList.remove("show");clearInterval(timerInt)}
+function setTimer(n){timerSec=n;clearInterval(timerInt);updateTimer();timerInt=setInterval(()=>{timerSec--;updateTimer();if(timerSec<=0){clearInterval(timerInt);navigator.vibrate?.(300);alert("Descanso encerrado!")}},1000)}
+function updateTimer(){document.getElementById("timer").textContent=`${String(Math.floor(timerSec/60)).padStart(2,"0")}:${String(timerSec%60).padStart(2,"0")}`}
+function renderHistory(){const el=document.getElementById("history");if(!history.length){el.innerHTML='<p class="muted">Nenhum registro ainda.</p>';return}el.innerHTML=history.slice(0,30).map(x=>`<div class="exercise"><b>${x.workout}</b><div class="muted small">${x.date}${x.kg?` • ${x.kg} kg`:" • treino finalizado"}</div></div>`).join("")}
+function renderProgress(){const el=document.getElementById("progress");const rows=[];workouts.forEach((w,i)=>w.items.forEach((e,j)=>{const v=localStorage.getItem(`w${i}e${j}`);if(v)rows.push(`<div class="row card"><b>${e}</b><span class="badge">${v} kg</span></div>`)}));el.innerHTML=rows.length?rows.join(""):'<p class="muted">Registre suas cargas para ver a evolução.</p>'}
+function renderAll(){document.getElementById("exerciseCount").textContent=workouts.reduce((a,w)=>a+w.items.length,0);document.getElementById("recordCount").textContent=history.length;document.getElementById("nextName").textContent=workouts[current]?.name||"Treino 1";document.getElementById("nextCount").textContent=(workouts[current]?.items.length||0)+" exercícios";renderList();renderHistory();renderProgress();document.getElementById("aiText").textContent=history.length?`Você já tem ${history.length} registros. Continue registrando as cargas e tente evoluir aos poucos, mantendo boa técnica.`:"Registre alguns treinos para eu analisar sua evolução."}
+renderAll();
+</script>
+</body>
+</html>
