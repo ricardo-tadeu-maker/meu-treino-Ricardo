@@ -71,11 +71,10 @@ h2{margin:3px 0 8px;font-size:23px}.muted{color:var(--muted)}.next{display:flex;
 
 <script>
 const defaults=[
-{name:"Treino 1",items:["Costas + bíceps","Puxada frontal","Remada baixa","Remada unilateral","Rosca direta","Rosca martelo","Face pull"]},
-{name:"Treino 2",items:["Peito + tríceps","Supino reto","Supino inclinado","Crucifixo","Tríceps pulley","Tríceps francês","Elevação lateral"]},
-{name:"Treino 3",items:["Pernas","Leg press 45","Agachamento","Cadeira extensora","Mesa flexora","Stiff","Panturrilha"]},
-{name:"Treino 4",items:["Ombros + braços","Desenvolvimento","Elevação lateral","Elevação posterior","Rosca direta","Tríceps corda","Abdominal"]},
-{name:"Treino 5",items:["Full body","Leg press 45","Supino","Puxada","Remada","Desenvolvimento","Abdominal"]}
+{name:"Treino 1",items:["Puxador frente pegada aberta","Remada máquina","Crucifixo inverso na máquina","Pull-down na polia","Rosca simultânea banco 45°","Elevação lateral sentado com halter","Rosca Scott com barra W"]},
+{name:"Treino 2",items:["Supino reto com barra","Desenvolvimento máquina","Cross over","Supino inclinado com halteres","Tríceps testa pegada pronada","Elevação lateral na polia","Tríceps corda"]},
+{name:"Treino 3",items:["Mesa flexora","Agachamento hack","Levantamento terra","Leg press 45°","Cadeira flexora","Cadeira extensora","Abdominal no banco declinado"]},
+{name:"Treino 4",items:["Abdominal supra na polia","Supino máquina","Remada curvada","Desenvolvimento com halteres","Puxador frente com triângulo","Cross over baixo","Rosca direta barra W + Tríceps francês com halteres"]}
 ];
 let workouts=JSON.parse(localStorage.getItem("ricardo_workouts")||"null")||defaults;
 let history=JSON.parse(localStorage.getItem("ricardo_history")||"[]"), current=0, timerSec=90, timerInt=null;
